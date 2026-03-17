@@ -5,20 +5,36 @@
 import { db } from './store.js';
 
 export function seedDatabase() {
-  const isV1Seeded = db.isSeeded();
-  const isV2Seeded = localStorage.getItem('smarthub_seeded_v2');
   const isV3Seeded = localStorage.getItem('smarthub_seeded_v3');
+  const isV4Seeded = localStorage.getItem('smarthub_seeded_v4');
+  const isV5Seeded = localStorage.getItem('smarthub_seeded_v5');
   
-  if (isV1Seeded && isV2Seeded && isV3Seeded) return;
+  if (isV1Seeded && isV2Seeded && isV3Seeded && isV4Seeded && isV5Seeded) return;
+  
+  // Incremental seeding for existing tenants
+  if (isV1Seeded && isV2Seeded && isV3Seeded && isV4Seeded && !isV5Seeded) {
+    seedModule5Data();
+    return;
+  }
+  
+  if (isV1Seeded && isV2Seeded && isV3Seeded && !isV4Seeded) {
+    seedModule4Data();
+    seedModule5Data();
+    return;
+  }
   
   if (isV1Seeded && isV2Seeded && !isV3Seeded) {
     seedModule3Data();
+    seedModule4Data();
+    seedModule5Data();
     return;
   }
   
   if (isV1Seeded && !isV2Seeded) {
-    // We only need to seed Module 2 data
     seedModule2Data();
+    seedModule3Data();
+    seedModule4Data();
+    seedModule5Data();
     return;
   }
 
@@ -217,6 +233,8 @@ export function seedDatabase() {
 
   seedModule2Data(tenant, owner);
   seedModule3Data(tenant, owner);
+  seedModule4Data(tenant, owner);
+  seedModule5Data(tenant, owner);
 
   db.markSeeded();
   console.log('✅ SmartHub ERP — Database seeded successfully');
@@ -436,5 +454,175 @@ function seedModule3Data(tenantParam, ownerParam) {
 
   localStorage.setItem('smarthub_seeded_v3', 'true');
   console.log('✅ SmartHub ERP — Module 3 seeded');
+}
+
+function seedModule4Data(tenantParam, ownerParam) {
+  const tenant = tenantParam || db.find('tenants', () => true)[0];
+  const owner = ownerParam || db.find('users', u => u.email === 'rajesh@smarthub.com')[0];
+  const taxSlab = db.find('tax_slabs', t => t.name === 'GST 18%')[0];
+  
+  if (!tenant || !owner) return;
+
+  // ── Module 4: Inventory Data ───────────────────────────
+  
+  // Categories
+  const cat1 = db.create('categories', { tenant_id: tenant.id, name: 'Smartphones', code: 'SMT' });
+  const cat2 = db.create('categories', { tenant_id: tenant.id, name: 'Laptops', code: 'LPT' });
+  const cat3 = db.create('categories', { tenant_id: tenant.id, name: 'Accessories', code: 'ACC' });
+
+  // Units of Measure (UoM)
+  const uomPcs = db.create('uoms', { tenant_id: tenant.id, name: 'Piece', abbreviation: 'Pcs' });
+  const uomBox = db.create('uoms', { tenant_id: tenant.id, name: 'Box', abbreviation: 'Box' });
+
+  // Warehouses
+  const whMain = db.create('warehouses', { 
+    tenant_id: tenant.id, 
+    name: 'Main Warehouse - Industrial Area', 
+    code: 'M-WHS', 
+    city: 'Ahmedabad',
+    is_default: true 
+  });
+  const whRetail = db.create('warehouses', { 
+    tenant_id: tenant.id, 
+    name: 'Retail Outlet - CG Road', 
+    code: 'R-OUT', 
+    city: 'Ahmedabad',
+    is_default: false 
+  });
+
+  // Products
+  const prod1 = db.create('products', {
+    tenant_id: tenant.id,
+    name: 'iPhone 15 Pro 256GB',
+    sku: 'IPH-15P-256',
+    category_id: cat1.id,
+    brand: 'Apple',
+    uom_id: uomPcs.id,
+    purchase_price: 110000,
+    sale_price: 129990,
+    min_stock_level: 5,
+    tax_slab_id: taxSlab?.id || null,
+    status: 'active'
+  });
+
+  const prod2 = db.create('products', {
+    tenant_id: tenant.id,
+    name: 'MacBook Air M2 13-inch',
+    sku: 'MAC-AIR-M2',
+    category_id: cat2.id,
+    brand: 'Apple',
+    uom_id: uomPcs.id,
+    purchase_price: 95000,
+    sale_price: 114990,
+    min_stock_level: 3,
+    tax_slab_id: taxSlab?.id || null,
+    status: 'active'
+  });
+
+  // Stock Levels
+  db.create('stock_levels', {
+    tenant_id: tenant.id,
+    product_id: prod1.id,
+    warehouse_id: whMain.id,
+    current_quantity: 12,
+    reserved_quantity: 2,
+    opening_quantity: 10
+  });
+
+  db.create('stock_levels', {
+    tenant_id: tenant.id,
+    product_id: prod2.id,
+    warehouse_id: whMain.id,
+    current_quantity: 8,
+    reserved_quantity: 0,
+    opening_quantity: 5
+  });
+
+  // Stock Ledger (Initial Entries)
+  db.create('stock_ledger', {
+    tenant_id: tenant.id,
+    product_id: prod1.id,
+    warehouse_id: whMain.id,
+    transaction_type: 'adjustment',
+    quantity_change: 12,
+    summary: 'Opening Stock Entry',
+    performed_by: owner.id
+  });
+
+  localStorage.setItem('smarthub_seeded_v4', 'true');
+  console.log('✅ SmartHub ERP — Module 4 seeded');
+}
+
+function seedModule5Data(tenantParam, ownerParam) {
+  const tenant = tenantParam || db.find('tenants', () => true)[0];
+  const owner = ownerParam || db.find('users', u => u.email === 'rajesh@smarthub.com')[0];
+  const customer1 = db.find('customers', c => c.name === 'Reliance Retail Ltd.')[0];
+  const prod1 = db.find('products', p => p.sku === 'IPH-15P-256')[0];
+  
+  if (!tenant || !owner || !customer1 || !prod1) return;
+
+  // ── Module 5: Sales Data ──────────────────────────────
+  
+  // Sales Orders
+  const so1 = db.create('sales_orders', {
+    tenant_id: tenant.id,
+    customer_id: customer1.id,
+    order_number: 'SO-2025-001',
+    order_date: '2025-03-12',
+    status: 'confirmed',
+    total_amount: 110161.02,
+    tax_amount: 19828.98,
+    grand_total: 129990.00,
+    items: [
+      {
+        product_id: prod1.id,
+        product_name: prod1.name,
+        quantity: 1,
+        unit_price: 110161.02,
+        tax_rate: 18,
+        tax_amount: 19828.98,
+        total: 129990.00
+      }
+    ]
+  });
+
+  // Invoices
+  const inv1 = db.create('invoices', {
+    tenant_id: tenant.id,
+    order_id: so1.id,
+    customer_id: customer1.id,
+    invoice_number: 'INV-2025-001',
+    invoice_date: '2025-03-12',
+    due_date: '2025-03-27',
+    status: 'partial',
+    total_amount: 110161.02,
+    tax_amount: 19828.98,
+    grand_total: 129990.00,
+    amount_paid: 50000.00,
+    items: [
+      {
+        product_id: prod1.id,
+        product_name: prod1.name,
+        quantity: 1,
+        unit_price: 110161.02,
+        tax_rate: 18,
+        tax_amount: 19828.98,
+        total: 129990.00
+      }
+    ]
+  });
+
+  // Payments
+  db.create('payments', {
+    tenant_id: tenant.id,
+    invoice_id: inv1.id,
+    payment_date: '2025-03-12',
+    amount: 50000.00,
+    method: 'bank_transfer',
+    reference_no: 'TXN123456789'
+  });
+
+  localStorage.setItem('smarthub_seeded_v5', 'true');
+  console.log('✅ SmartHub ERP — Module 5 seeded');
 }
 

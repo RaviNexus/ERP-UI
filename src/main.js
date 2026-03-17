@@ -27,6 +27,17 @@ import { renderCustomers } from './pages/crm-customers.js';
 import { renderOpportunities } from './pages/crm-opportunities.js';
 import { renderInteractions } from './pages/crm-interactions.js';
 
+// Inventory Module
+import { renderProducts } from './pages/inventory-products.js';
+import { renderWarehouses } from './pages/inventory-warehouses.js';
+import { renderStockAdjustments } from './pages/inventory-adjustments.js';
+import { renderCategoriesUoMs } from './pages/inventory-config.js';
+
+// Sales Module
+import { renderSalesDashboard } from './pages/sales-dashboard.js';
+import { renderSalesOrders } from './pages/sales-orders.js';
+import { renderInvoices } from './pages/sales-invoices.js';
+
 
 // ── Seed Database ────────────────────────────────────────
 seedDatabase();
@@ -89,10 +100,21 @@ router.addRoute('/crm/customers', () => renderCustomers());
 router.addRoute('/crm/pipeline', () => renderOpportunities());
 router.addRoute('/crm/interactions', () => renderInteractions());
 
+// Module 4: Inventory Routes
+router.addRoute('/inventory/products', () => renderProducts());
+router.addRoute('/inventory/warehouses', () => renderWarehouses());
+router.addRoute('/inventory/adjustments', () => renderStockAdjustments());
+router.addRoute('/inventory/config', () => renderCategoriesUoMs());
+
+// Module 5: Sales Routes
+router.addRoute('/sales/dashboard', () => renderSalesDashboard());
+router.addRoute('/sales/orders', () => renderSalesOrders());
+router.addRoute('/sales/invoices', () => renderInvoices());
+
 // Future module placeholders
 router.addRoute('/crm/leads-old', placeholderPage('CRM & Leads', '👥', 'Old CRM view removed'));
-router.addRoute('/inventory/products', placeholderPage('Inventory', '📦', 'Inventory and stock management coming soon'));
-router.addRoute('/sales/dashboard', placeholderPage('Sales & Invoicing', '🧾', 'Sales and invoicing module coming soon'));
+router.addRoute('/inventory/products-old', placeholderPage('Inventory', '📦', 'Old inventory view removed'));
+router.addRoute('/sales/dashboard-old', placeholderPage('Sales', '🧾', 'Old sales view removed'));
 router.addRoute('/purchase/vendors', placeholderPage('Purchase & Vendors', '🛒', 'Purchase and vendor management coming soon'));
 router.addRoute('/finance/accounts', placeholderPage('Finance & Accounting', '💰', 'Finance and accounting module coming soon'));
 router.addRoute('/hr/employees', placeholderPage('HR & Payroll', '👨‍💼', 'HR and payroll module coming soon'));
