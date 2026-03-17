@@ -25,6 +25,7 @@ import { renderSettingsBranding } from './pages/settings-branding.js';
 import { renderLeads } from './pages/crm-leads.js';
 import { renderCustomers } from './pages/crm-customers.js';
 import { renderOpportunities } from './pages/crm-opportunities.js';
+import { renderInteractions } from './pages/crm-interactions.js';
 
 
 // ── Seed Database ────────────────────────────────────────
@@ -86,6 +87,7 @@ const placeholderPage = (title, icon, desc) => () => {
 router.addRoute('/crm/leads', () => renderLeads());
 router.addRoute('/crm/customers', () => renderCustomers());
 router.addRoute('/crm/pipeline', () => renderOpportunities());
+router.addRoute('/crm/interactions', () => renderInteractions());
 
 // Future module placeholders
 router.addRoute('/crm/leads-old', placeholderPage('CRM & Leads', '👥', 'Old CRM view removed'));

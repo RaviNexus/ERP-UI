@@ -1,11 +1,8 @@
-// ============================================================
-// SmartHub ERP — CRM: Opportunity Pipeline
-// ============================================================
-
 import { auth } from '../core/auth.js';
 import { db } from '../core/store.js';
 import { renderDashboardLayout } from './layout.js';
 import { showToast, showModal, closeModal, validators, validateField, setButtonLoading, escapeHtml } from '../core/ui.js';
+import { showActivityModal } from './crm-interactions.js';
 
 export function renderOpportunities() {
   const session = auth.getSession();
@@ -88,7 +85,7 @@ export function renderOpportunities() {
 
   document.querySelectorAll('.interaction-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      showToast('info', 'Interaction Log', 'Activity logging component is being implemented next.');
+      showActivityModal('opportunity', btn.dataset.id);
     });
   });
 }
