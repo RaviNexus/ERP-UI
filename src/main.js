@@ -21,6 +21,11 @@ import { renderSettingsFiscalYear } from './pages/settings-fiscal-year.js';
 import { renderSettingsCurrencyTax } from './pages/settings-currency-tax.js';
 import { renderSettingsBranding } from './pages/settings-branding.js';
 
+// CRM Module
+import { renderLeads } from './pages/crm-leads.js';
+import { renderCustomers } from './pages/crm-customers.js';
+import { renderOpportunities } from './pages/crm-opportunities.js';
+
 
 // ── Seed Database ────────────────────────────────────────
 seedDatabase();
@@ -77,8 +82,13 @@ const placeholderPage = (title, icon, desc) => () => {
   });
 };
 
+// Module 3: CRM Routes
+router.addRoute('/crm/leads', () => renderLeads());
+router.addRoute('/crm/customers', () => renderCustomers());
+router.addRoute('/crm/pipeline', () => renderOpportunities());
+
 // Future module placeholders
-router.addRoute('/crm/leads', placeholderPage('CRM & Leads', '👥', 'Customer relationship management module coming soon'));
+router.addRoute('/crm/leads-old', placeholderPage('CRM & Leads', '👥', 'Old CRM view removed'));
 router.addRoute('/inventory/products', placeholderPage('Inventory', '📦', 'Inventory and stock management coming soon'));
 router.addRoute('/sales/dashboard', placeholderPage('Sales & Invoicing', '🧾', 'Sales and invoicing module coming soon'));
 router.addRoute('/purchase/vendors', placeholderPage('Purchase & Vendors', '🛒', 'Purchase and vendor management coming soon'));

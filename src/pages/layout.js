@@ -12,7 +12,9 @@ const NAV_ITEMS = [
     { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
   ]},
   { section: 'Business', items: [
-    { id: 'crm', label: 'CRM & Leads', icon: '👥', path: '/crm/leads', perm: 'crm.view' },
+    { id: 'crm-leads', label: 'Leads', icon: '🎯', path: '/crm/leads', perm: 'crm.view' },
+    { id: 'crm-pipeline', label: 'Deal Pipeline', icon: '📊', path: '/crm/pipeline', perm: 'crm.view' },
+    { id: 'crm-customers', label: 'Customers', icon: '👥', path: '/crm/customers', perm: 'crm.view' },
     { id: 'inventory', label: 'Inventory', icon: '📦', path: '/inventory/products', perm: 'inventory.view' },
     { id: 'sales', label: 'Sales & Invoicing', icon: '🧾', path: '/sales/dashboard', perm: 'sales.view' },
     { id: 'purchase', label: 'Purchase', icon: '🛒', path: '/purchase/vendors', perm: 'purchase.view' },
